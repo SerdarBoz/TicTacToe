@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="519.0" prefWidth="587.0" style="-fx-background-color: #1d3557;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.Controller">
+   <children>
+      <FlowPane layoutX="180.0" layoutY="164.0" prefHeight="220.0" prefWidth="228.0" style="-fx-background-color: #ffffff; -fx-border-color: #000000;">
+         <children>
+            <Button fx:id="button1" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill></Button>
+            <Button fx:id="button2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button3" layoutX="85.0" layoutY="10.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button4" layoutX="160.0" layoutY="10.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button5" layoutX="10.0" layoutY="85.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button6" layoutX="85.0" layoutY="85.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button7" layoutX="160.0" layoutY="85.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button8" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+            <Button fx:id="button9" layoutX="85.0" layoutY="160.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" style="-fx-border-color: #000000;">
+               <font>
+                  <Font size="30.0" />
+               </font></Button>
+         </children>
+      </FlowPane>
+      <Text fx:id="winnerText" fill="WHITE" layoutX="180.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tic-Tac-Toe" textAlignment="CENTER" wrappingWidth="237.9443359375">
+         <font>
+            <Font size="39.0" />
+         </font>
+      </Text>
+      <Button fx:id="restartButton" layoutX="159.0" layoutY="418.0" mnemonicParsing="false" onAction="#restartGame" prefWidth="116.0" text="Try again" />
+      <Button fx:id="restartSeriesButton" disable="true" layoutX="313.0" layoutY="418.0" mnemonicParsing="false" onAction="#restartSeries" prefWidth="116.0" text="Restart game" />
+      <Text fx:id="scoreboardText" fill="WHITE" layoutX="429.0" layoutY="192.0" text="Scoreboard: X - 0, O - 0" wrappingWidth="124.412109375" />
+   </children>
+</AnchorPane>
