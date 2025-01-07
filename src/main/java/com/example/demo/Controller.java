@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +24,7 @@ public class Controller implements Initializable {
     @FXML
     private Text scoreboardText;
 
-
-    private int playerTurn = 0;  // 0 for player, 1 for computer
+    private Player currentPlayer = Player.X; // Start met speler X
     private int playerXWins = 0;
     private int playerOWins = 0;
 
@@ -50,17 +50,12 @@ public class Controller implements Initializable {
 
     @FXML
     void restartSeries(ActionEvent event) {
-        // Reset all scores and state
         playerXWins = 0;
         playerOWins = 0;
 
-        // Reset the board
         restartGame(null);
 
-        // Reset the text
         winnerText.setText("Tic-Tac-Toe");
-
-        // Disable the button again
         restartSeriesButton.setDisable(true);
         restartButton.setDisable(false);
         updateScoreboard();
@@ -70,7 +65,7 @@ public class Controller implements Initializable {
     void restartGame(ActionEvent event) {
         buttons.forEach(this::resetButton);
         winnerText.setText("Tic-Tac-Toe");
-        playerTurn = 0;  // Start with player again
+        currentPlayer = Player.X; // Start opnieuw met speler X
     }
 
     public void resetButton(Button button) {
@@ -84,20 +79,15 @@ public class Controller implements Initializable {
             button.setDisable(true);
             checkIfGameIsOver();
 
-            if (playerTurn == 1) {
-                computerMove();  // Let computer play after player move
+            if (currentPlayer == Player.O) {
+                computerMove();
             }
         });
     }
 
     public void setPlayerSymbol(Button button) {
-        if (playerTurn % 2 == 0) {
-            button.setText("X");
-            playerTurn = 1;  // Computer's turn
-        } else {
-            button.setText("O");
-            playerTurn = 0;  // Player's turn
-        }
+        button.setText(currentPlayer.toString());
+        currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X; // Wissel tussen X en O
     }
 
     public void checkIfGameIsOver() {
@@ -131,13 +121,13 @@ public class Controller implements Initializable {
                 default:
                     line = null;
                     break;
-            };
+            }
 
             // X wins
             if (line.equals("XXX")) {
                 playerXWins++;
                 winnerText.setText("X won! Score: " + playerXWins + " - " + playerOWins);
-                updateScoreboard(); // Update the scoreboard
+                updateScoreboard();
                 disableButtons();
                 checkBestOfFive();
                 return;
@@ -147,38 +137,37 @@ public class Controller implements Initializable {
             if (line.equals("OOO")) {
                 playerOWins++;
                 winnerText.setText("O won! Score: " + playerXWins + " - " + playerOWins);
-                updateScoreboard(); // Update the scoreboard
+                updateScoreboard();
                 disableButtons();
                 checkBestOfFive();
                 return;
             }
         }
 
-        // If all buttons are filled and no winner, it's a draw
         if (buttons.stream().allMatch(Button::isDisabled)) {
             winnerText.setText("It's a draw! Score: " + playerXWins + " - " + playerOWins);
-            updateScoreboard(); // Update the scoreboard
+            updateScoreboard();
             checkBestOfFive();
         }
     }
+
     private void disableButtons() {
         buttons.forEach(button -> button.setDisable(true));
     }
 
     private void checkBestOfFive() {
         if (playerXWins == 3) {
-            winnerText.setText("X wins with 3 victories!");
+            winnerText.setText("X wins the series!");
             disableButtons();
-            restartSeriesButton.setDisable(false); // Enable the button
+            restartSeriesButton.setDisable(false);
             restartButton.setDisable(true);
         } else if (playerOWins == 3) {
-            winnerText.setText("O wins with 3 victories!");
+            winnerText.setText("O wins the series!");
             disableButtons();
-            restartSeriesButton.setDisable(false); // Enable the button
+            restartSeriesButton.setDisable(false);
             restartButton.setDisable(true);
         }
     }
-
 
     private void computerMove() {
         ArrayList<Button> availableButtons = new ArrayList<>();
@@ -190,10 +179,15 @@ public class Controller implements Initializable {
 
         if (!availableButtons.isEmpty()) {
             Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
-            randomButton.setText("O");
+            randomButton.setText(Player.O.toString());
             randomButton.setDisable(true);
-            playerTurn = 0;  // Player's turn after computer move
+            currentPlayer = Player.X;
             checkIfGameIsOver();
         }
     }
+}
+
+// Enum for Player
+enum Player {
+    X, O
 }
