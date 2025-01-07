@@ -23,6 +23,8 @@ public class Controller implements Initializable {
     private Button restartSeriesButton;
     @FXML
     private Text scoreboardText;
+    @FXML
+    private Text errorText;
 
     private Player currentPlayer = Player.X; // Start met speler X
     private int playerXWins = 0;
@@ -75,17 +77,25 @@ public class Controller implements Initializable {
 
     private void setupButton(Button button) {
         button.setOnMouseClicked(mouseEvent -> {
-            setPlayerSymbol(button);
-            button.setDisable(true);
-            checkIfGameIsOver();
+            try {
+                setPlayerSymbol(button); // Zet het symbool voor de huidige speler
+                checkIfGameIsOver(); // Controleer of het spel is afgelopen
 
-            if (currentPlayer == Player.O) {
-                computerMove();
+                if (currentPlayer == Player.O) {
+                    computerMove(); // Zet voor de computer
+                }
+
+            } catch (CellOccupiedException e) {
+                // Foutafhandeling bij een poging om een bezette cel te kiezen
+                errorText.setText("This cell is already occupied. Try again.");
             }
         });
     }
 
-    public void setPlayerSymbol(Button button) {
+    public void setPlayerSymbol(Button button) throws CellOccupiedException {
+        if (!button.getText().isEmpty()) {
+            throw new CellOccupiedException("This cell is already occupied!");
+        }
         button.setText(currentPlayer.toString());
         currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X; // Wissel tussen X en O
     }
@@ -144,8 +154,9 @@ public class Controller implements Initializable {
             }
         }
 
-        if (buttons.stream().allMatch(Button::isDisabled)) {
+        if (buttons.stream().allMatch(button -> !button.getText().isEmpty())) {
             winnerText.setText("It's a draw! Score: " + playerXWins + " - " + playerOWins);
+            disableButtons();
             updateScoreboard();
             checkBestOfFive();
         }
@@ -179,10 +190,20 @@ public class Controller implements Initializable {
 
         if (!availableButtons.isEmpty()) {
             Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
-            randomButton.setText(Player.O.toString());
-            randomButton.setDisable(true);
-            currentPlayer = Player.X;
-            checkIfGameIsOver();
+            try {
+                setPlayerSymbol(randomButton);
+                checkIfGameIsOver();
+            } catch (CellOccupiedException e) {
+                // De uitzondering wordt hier opgevangen, hoewel dit scenario zelden zou moeten optreden
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Aangepaste uitzondering
+    public class CellOccupiedException extends Exception {
+        public CellOccupiedException(String message) {
+            super(message);
         }
     }
 }
