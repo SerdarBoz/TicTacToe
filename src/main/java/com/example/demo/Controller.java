@@ -8,12 +8,14 @@ import javafx.scene.text.Text;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Controller implements Initializable {
     @FXML
@@ -29,9 +31,10 @@ public class Controller implements Initializable {
     @FXML
     private Text errorText;
 
-    private Player currentPlayer = Player.X; // Start met speler X
+    private Player currentPlayer = Player.X;
     private int playerXWins = 0;
     private int playerOWins = 0;
+    private int gameCount = 1;
 
     ArrayList<Button> buttons;
     Random random = new Random();
@@ -45,7 +48,7 @@ public class Controller implements Initializable {
             button.setFocusTraversable(false);
         });
 
-        updateScoreboard(); // Initialize the scoreboard
+        updateScoreboard();
         restartSeriesButton.setDisable(true);
     }
 
@@ -57,9 +60,8 @@ public class Controller implements Initializable {
     void restartSeries(ActionEvent event) {
         playerXWins = 0;
         playerOWins = 0;
-
+        gameCount++;
         restartGame(null);
-
         winnerText.setText("Tic-Tac-Toe");
         restartSeriesButton.setDisable(true);
         restartButton.setDisable(false);
@@ -70,7 +72,7 @@ public class Controller implements Initializable {
     void restartGame(ActionEvent event) {
         buttons.forEach(this::resetButton);
         winnerText.setText("Tic-Tac-Toe");
-        currentPlayer = Player.X; // Start opnieuw met speler X
+        currentPlayer = Player.X;
     }
 
     public void resetButton(Button button) {
@@ -81,22 +83,19 @@ public class Controller implements Initializable {
     private void setupButton(Button button) {
         button.setOnMouseClicked(mouseEvent -> {
             try {
-                setPlayerSymbol(button); // Zet het symbool voor de huidige speler
-                checkIfGameIsOver(); // Controleer of het spel is afgelopen
+                setPlayerSymbol(button);
+                checkIfGameIsOver();
 
                 if (currentPlayer == Player.O) {
-                    computerMove(); // Zet voor de computer
+                    computerMove();
                 }
 
             } catch (CellOccupiedException e) {
-                // Foutafhandeling bij een poging om een bezette cel te kiezen
                 errorText.setText("This cell is already occupied. Try again.");
-
-                // Maak de foutmelding na 2 seconden leeg
                 new Timeline(
                         new KeyFrame(
-                                Duration.seconds(1), // Wacht 2 seconden
-                                event -> errorText.setText("")  // Verwijder de foutmelding
+                                Duration.seconds(1),
+                                event -> errorText.setText("")
                         )
                 ).play();
             }
@@ -108,7 +107,7 @@ public class Controller implements Initializable {
             throw new CellOccupiedException("This cell is already occupied!");
         }
         button.setText(currentPlayer.toString());
-        currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X; // Wissel tussen X en O
+        currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X;
     }
 
     public void checkIfGameIsOver() {
@@ -144,7 +143,6 @@ public class Controller implements Initializable {
                     break;
             }
 
-            // X wins
             if (line.equals("XXX")) {
                 playerXWins++;
                 winnerText.setText("X won! Score: " + playerXWins + " - " + playerOWins);
@@ -153,7 +151,7 @@ public class Controller implements Initializable {
                 checkBestOfFive();
                 return;
             }
-            // O wins
+
             if (line.equals("OOO")) {
                 playerOWins++;
                 winnerText.setText("O won! Score: " + playerXWins + " - " + playerOWins);
@@ -169,6 +167,7 @@ public class Controller implements Initializable {
             disableButtons();
             updateScoreboard();
             checkBestOfFive();
+
         }
     }
 
@@ -180,11 +179,13 @@ public class Controller implements Initializable {
         if (playerXWins == 3) {
             winnerText.setText("X wins the series!");
             disableButtons();
+            writeScoreToFile();
             restartSeriesButton.setDisable(false);
             restartButton.setDisable(true);
         } else if (playerOWins == 3) {
             winnerText.setText("O wins the series!");
             disableButtons();
+            writeScoreToFile();
             restartSeriesButton.setDisable(false);
             restartButton.setDisable(true);
         }
@@ -204,13 +205,21 @@ public class Controller implements Initializable {
                 setPlayerSymbol(randomButton);
                 checkIfGameIsOver();
             } catch (CellOccupiedException e) {
-                // De uitzondering wordt hier opgevangen, hoewel dit scenario zelden zou moeten optreden
                 e.printStackTrace();
             }
         }
     }
 
-    // Aangepaste uitzondering
+    private void writeScoreToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt", true))) {
+            writer.write("Game " + gameCount + "\n");
+            writer.write("X: " + playerXWins + "\n");
+            writer.write("O: " + playerOWins + "\n\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public class CellOccupiedException extends Exception {
         public CellOccupiedException(String message) {
             super(message);
@@ -218,7 +227,6 @@ public class Controller implements Initializable {
     }
 }
 
-// Enum for Player
 enum Player {
     X, O
 }
