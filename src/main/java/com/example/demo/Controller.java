@@ -5,6 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,6 +91,14 @@ public class Controller implements Initializable {
             } catch (CellOccupiedException e) {
                 // Foutafhandeling bij een poging om een bezette cel te kiezen
                 errorText.setText("This cell is already occupied. Try again.");
+
+                // Maak de foutmelding na 2 seconden leeg
+                new Timeline(
+                        new KeyFrame(
+                                Duration.seconds(1), // Wacht 2 seconden
+                                event -> errorText.setText("")  // Verwijder de foutmelding
+                        )
+                ).play();
             }
         });
     }
@@ -142,7 +153,6 @@ public class Controller implements Initializable {
                 checkBestOfFive();
                 return;
             }
-
             // O wins
             if (line.equals("OOO")) {
                 playerOWins++;
