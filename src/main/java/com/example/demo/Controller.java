@@ -21,15 +21,9 @@ public class Controller implements Initializable {
     @FXML
     private Button button1, button2, button3, button4, button5, button6, button7, button8, button9;
     @FXML
-    private Text winnerText;
+    private Button tryAgainButton, restartSeriesButton;
     @FXML
-    private Button restartButton;
-    @FXML
-    private Button restartSeriesButton;
-    @FXML
-    private Text scoreboardText;
-    @FXML
-    private Text errorText;
+    private Text winnerText, scoreboardText, errorText;
 
     private Player currentPlayer = Player.X;
     private int playerXWins = 0;
@@ -42,12 +36,10 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         buttons = new ArrayList<>(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9));
-
         buttons.forEach(button -> {
             setupButton(button);
             button.setFocusTraversable(false);
         });
-
         updateScoreboard();
         restartSeriesButton.setDisable(true);
     }
@@ -62,20 +54,20 @@ public class Controller implements Initializable {
         playerOWins = 0;
         gameCount++;
         restartGame(null);
-        winnerText.setText("Tic-Tac-Toe");
+        winnerText.setText("Tic-Tac-Toe! Best of five!");
         restartSeriesButton.setDisable(true);
-        restartButton.setDisable(false);
+        tryAgainButton.setDisable(false);
         updateScoreboard();
     }
 
     @FXML
     void restartGame(ActionEvent event) {
-        buttons.forEach(this::resetButton);
-        winnerText.setText("Tic-Tac-Toe");
+        buttons.forEach(this::tryAgain);
+        winnerText.setText("Tic-Tac-Toe! Best of five!");
         currentPlayer = Player.X;
     }
 
-    public void resetButton(Button button) {
+    public void tryAgain(Button button) {
         button.setDisable(false);
         button.setText("");
     }
@@ -85,11 +77,9 @@ public class Controller implements Initializable {
             try {
                 setPlayerSymbol(button);
                 checkIfGameIsOver();
-
                 if (currentPlayer == Player.O) {
                     computerMove();
                 }
-
             } catch (CellOccupiedException e) {
                 errorText.setText("This cell is already occupied. Try again.");
                 new Timeline(
@@ -142,7 +132,6 @@ public class Controller implements Initializable {
                     line = null;
                     break;
             }
-
             if (line.equals("XXX")) {
                 playerXWins++;
                 winnerText.setText("X won! Score: " + playerXWins + " - " + playerOWins);
@@ -151,7 +140,6 @@ public class Controller implements Initializable {
                 checkBestOfFive();
                 return;
             }
-
             if (line.equals("OOO")) {
                 playerOWins++;
                 winnerText.setText("O won! Score: " + playerXWins + " - " + playerOWins);
@@ -161,7 +149,6 @@ public class Controller implements Initializable {
                 return;
             }
         }
-
         if (buttons.stream().allMatch(button -> !button.getText().isEmpty())) {
             winnerText.setText("It's a draw! Score: " + playerXWins + " - " + playerOWins);
             disableButtons();
@@ -181,13 +168,13 @@ public class Controller implements Initializable {
             disableButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
-            restartButton.setDisable(true);
+            tryAgainButton.setDisable(true);
         } else if (playerOWins == 3) {
             winnerText.setText("O wins the series!");
             disableButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
-            restartButton.setDisable(true);
+            tryAgainButton.setDisable(true);
         }
     }
 
@@ -198,7 +185,6 @@ public class Controller implements Initializable {
                 availableButtons.add(button);
             }
         }
-
         if (!availableButtons.isEmpty()) {
             Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
             try {

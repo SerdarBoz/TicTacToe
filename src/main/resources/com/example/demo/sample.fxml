@@ -48,12 +48,12 @@
                </font></Button>
          </children>
       </FlowPane>
-      <Text fx:id="winnerText" fill="WHITE" layoutX="180.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tic-Tac-Toe" textAlignment="CENTER" wrappingWidth="237.9443359375">
+      <Text fx:id="winnerText" fill="WHITE" layoutX="180.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tic-Tac-Toe! Best of five!" textAlignment="CENTER" wrappingWidth="237.9443359375">
          <font>
             <Font size="39.0" />
          </font>
       </Text>
-      <Button fx:id="restartButton" layoutX="159.0" layoutY="418.0" mnemonicParsing="false" onAction="#restartGame" prefWidth="116.0" text="Try again" />
+      <Button fx:id="tryAgainButton" layoutX="159.0" layoutY="418.0" mnemonicParsing="false" onAction="#restartGame" prefWidth="116.0" text="Try again" />
       <Button fx:id="restartSeriesButton" disable="true" layoutX="313.0" layoutY="418.0" mnemonicParsing="false" onAction="#restartSeries" prefWidth="116.0" text="Restart game" />
       <Text fx:id="scoreboardText" fill="WHITE" layoutX="429.0" layoutY="192.0" text="Scoreboard: X - 0, O - 0" wrappingWidth="124.412109375" />
       <Text fx:id="errorText" fill="WHITE" layoutX="14.0" layoutY="221.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="153.14434814453125">
