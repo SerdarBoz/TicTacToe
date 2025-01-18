@@ -15,7 +15,6 @@ class ControllerTest {
 
     @BeforeAll
     static void initToolkit() {
-        // Start JavaFX-toolkit
         CountDownLatch latch = new CountDownLatch(1);
         Platform.startup(latch::countDown);
         try {
@@ -29,7 +28,6 @@ class ControllerTest {
     void setUp() {
         controller = new Controller();
 
-        // Mock de knoppen
         controller.button1 = new Button();
         controller.button2 = new Button();
         controller.button3 = new Button();
@@ -40,16 +38,13 @@ class ControllerTest {
         controller.button8 = new Button();
         controller.button9 = new Button();
 
-        // Mock de aanvullende knoppen
         controller.tryAgainButton = new Button();
         controller.restartSeriesButton = new Button();
 
-        // Mock de Text-velden
         controller.winnerText = new Text();
         controller.scoreboardText = new Text();
         controller.errorText = new Text();
 
-        // Zet de knoppen in de lijst
         controller.buttons = new ArrayList<>();
         controller.buttons.add(controller.button1);
         controller.buttons.add(controller.button2);
@@ -61,37 +56,29 @@ class ControllerTest {
         controller.buttons.add(controller.button8);
         controller.buttons.add(controller.button9);
 
-        // Initialiseer de controller
         controller.initialize(null, null);
     }
 
     @Test
     void testCheckIfGameIsOver_XWins() {
-        // Simuleer dat speler X drie knoppen in een rij heeft
         controller.button1.setText("X");
         controller.button2.setText("X");
         controller.button3.setText("X");
 
-        // Controleer of het spel correct eindigt
         controller.checkIfGameIsOver();
-        assertEquals("X won! Score: 1 - 0", controller.winnerText.getText());
+        assertEquals("X wint! Score: 1 - 0", controller.winnerText.getText());
     }
     @Test
     void testCheckIfGameIsOver_OWins() {
-        // Simuleer dat speler O drie knoppen in een kolom heeft
         controller.button1.setText("O");
         controller.button4.setText("O");
         controller.button7.setText("O");
-
         controller.checkIfGameIsOver();
-
-        // Controleer of de winnaar correct wordt gedetecteerd
-        assertEquals("O won! Score: 0 - 1", controller.winnerText.getText());
+        assertEquals("O wint! Score: 0 - 1", controller.winnerText.getText());
     }
 
     @Test
     void testCheckIfGameIsOver_Draw() {
-        // Vul alle knoppen zonder winnaar
         controller.button1.setText("X");
         controller.button2.setText("O");
         controller.button3.setText("X");
@@ -103,8 +90,6 @@ class ControllerTest {
         controller.button9.setText("O");
 
         controller.checkIfGameIsOver();
-
-        // Controleer of het gelijkspel correct wordt gedetecteerd
-        assertEquals("It's a draw! Score: 0 - 0", controller.winnerText.getText());
+        assertEquals("Gelijkspel! Score: 0 - 0", controller.winnerText.getText());
     }
 }

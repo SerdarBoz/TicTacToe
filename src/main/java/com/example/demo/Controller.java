@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -81,10 +82,10 @@ public class Controller implements Initializable {
                     computerMove();
                 }
             } catch (CellOccupiedException e) {
-                errorText.setText("This cell is already occupied. Try again.");
+                errorText.setText("Deze is al bezet! Probeer opnieuw.");
                 new Timeline(
                         new KeyFrame(
-                                Duration.seconds(1),
+                                Duration.seconds(1.5),
                                 event -> errorText.setText("")
                         )
                 ).play();
@@ -94,7 +95,7 @@ public class Controller implements Initializable {
 
     public void setPlayerSymbol(Button button) throws CellOccupiedException {
         if (!button.getText().isEmpty()) {
-            throw new CellOccupiedException("This cell is already occupied!");
+            throw new CellOccupiedException("Deze is al bezet!");
         }
         button.setText(currentPlayer.toString());
         currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X;
@@ -134,7 +135,7 @@ public class Controller implements Initializable {
             }
             if (line.equals("XXX")) {
                 playerXWins++;
-                winnerText.setText("X won! Score: " + playerXWins + " - " + playerOWins);
+                winnerText.setText("X wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
                 disableButtons();
                 checkBestOfFive();
@@ -142,7 +143,7 @@ public class Controller implements Initializable {
             }
             if (line.equals("OOO")) {
                 playerOWins++;
-                winnerText.setText("O won! Score: " + playerXWins + " - " + playerOWins);
+                winnerText.setText("O wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
                 disableButtons();
                 checkBestOfFive();
@@ -150,7 +151,7 @@ public class Controller implements Initializable {
             }
         }
         if (buttons.stream().allMatch(button -> !button.getText().isEmpty())) {
-            winnerText.setText("It's a draw! Score: " + playerXWins + " - " + playerOWins);
+            winnerText.setText("Gelijkspel! Score: " + playerXWins + " - " + playerOWins);
             disableButtons();
             updateScoreboard();
             checkBestOfFive();
@@ -164,13 +165,13 @@ public class Controller implements Initializable {
 
     private void checkBestOfFive() {
         if (playerXWins == 3) {
-            winnerText.setText("X wins the series!");
+            winnerText.setText("X wint het spel!");
             disableButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
             tryAgainButton.setDisable(true);
         } else if (playerOWins == 3) {
-            winnerText.setText("O wins the series!");
+            winnerText.setText("O wint het spel!");
             disableButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
@@ -186,15 +187,20 @@ public class Controller implements Initializable {
             }
         }
         if (!availableButtons.isEmpty()) {
-            Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
-            try {
-                setPlayerSymbol(randomButton);
-                checkIfGameIsOver();
-            } catch (CellOccupiedException e) {
-                e.printStackTrace();
-            }
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.3));
+            pause.setOnFinished(event -> {
+                Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
+                try {
+                    setPlayerSymbol(randomButton);
+                    checkIfGameIsOver();
+                } catch (CellOccupiedException e) {
+                    e.printStackTrace();
+                }
+            });
+            pause.play();
         }
     }
+
 
     private void writeScoreToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt", true))) {
