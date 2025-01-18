@@ -19,11 +19,11 @@ import java.io.IOException;
 
 public class Controller implements Initializable {
     @FXML
-    private Button button1, button2, button3, button4, button5, button6, button7, button8, button9;
+    public Button button1, button2, button3, button4, button5, button6, button7, button8, button9;
     @FXML
-    private Button tryAgainButton, restartSeriesButton;
+    public Button tryAgainButton, restartSeriesButton;
     @FXML
-    private Text winnerText, scoreboardText, errorText;
+    public Text winnerText, scoreboardText, errorText;
 
     private Player currentPlayer = Player.X;
     private int playerXWins = 0;
