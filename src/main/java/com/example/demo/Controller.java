@@ -32,15 +32,13 @@ public class Controller implements Initializable {
     private int gameCount = 1;
     private int totalGames = 0;
 
-    private GameBoard gameBoard;
+    GameBoard gameBoard;
     private final Random random = new Random();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialiseer de GameBoard-klasse met de knoppen
         gameBoard = new GameBoard(button1, button2, button3, button4, button5, button6, button7, button8, button9);
 
-        // Reset het spelbord en stel knoppen in
         gameBoard.resetBoard();
         gameBoard.getAvailableButtons().forEach(this::setupButton);
 

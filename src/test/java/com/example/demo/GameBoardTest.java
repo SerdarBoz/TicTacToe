@@ -1,11 +1,11 @@
 package com.example.demo;
+
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -86,5 +86,4 @@ class GameBoardTest {
         assertTrue(availableButtons.containsAll(expected));
         assertEquals(3, availableButtons.size());
     }
-
 }
