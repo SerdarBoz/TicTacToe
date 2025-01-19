@@ -176,10 +176,4 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
     }
-
-    public class CellOccupiedException extends Exception {
-        public CellOccupiedException(String message) {
-            super(message);
-        }
-    }
 }

@@ -11,4 +11,8 @@ Total Games: 7
 Game 3
 X Wins: 2 (40,0%)
 O Wins: 3 (60,0%)
-Total Games: 12
+Total Games: 12Game 1
+X Wins: 3 (100,0%)
+O Wins: 0 (0,0%)
+Total Games: 3
+
