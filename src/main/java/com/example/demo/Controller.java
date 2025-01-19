@@ -104,36 +104,17 @@ public class Controller implements Initializable {
 
     public void checkIfGameIsOver() {
         for (int a = 0; a < 8; a++) {
-            String line;
-            switch (a) {
-                case 0:
-                    line = button1.getText() + button2.getText() + button3.getText();
-                    break;
-                case 1:
-                    line = button4.getText() + button5.getText() + button6.getText();
-                    break;
-                case 2:
-                    line = button7.getText() + button8.getText() + button9.getText();
-                    break;
-                case 3:
-                    line = button1.getText() + button5.getText() + button9.getText();
-                    break;
-                case 4:
-                    line = button3.getText() + button5.getText() + button7.getText();
-                    break;
-                case 5:
-                    line = button1.getText() + button4.getText() + button7.getText();
-                    break;
-                case 6:
-                    line = button2.getText() + button5.getText() + button8.getText();
-                    break;
-                case 7:
-                    line = button3.getText() + button6.getText() + button9.getText();
-                    break;
-                default:
-                    line = null;
-                    break;
-            }
+            String line = switch (a) {
+                case 0 -> button1.getText() + button2.getText() + button3.getText();
+                case 1 -> button4.getText() + button5.getText() + button6.getText();
+                case 2 -> button7.getText() + button8.getText() + button9.getText();
+                case 3 -> button1.getText() + button5.getText() + button9.getText();
+                case 4 -> button3.getText() + button5.getText() + button7.getText();
+                case 5 -> button1.getText() + button4.getText() + button7.getText();
+                case 6 -> button2.getText() + button5.getText() + button8.getText();
+                case 7 -> button3.getText() + button6.getText() + button9.getText();
+                default -> null;
+            };
             if (line.equals("XXX")) {
                 playerXWins++;
                 totalGames++;
