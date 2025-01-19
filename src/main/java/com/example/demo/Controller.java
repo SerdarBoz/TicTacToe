@@ -183,8 +183,3 @@ public class Controller implements Initializable {
         }
     }
 }
-
-// Enum
-enum Player {
-    X, O
-}
