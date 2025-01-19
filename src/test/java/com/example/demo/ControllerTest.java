@@ -68,6 +68,7 @@ class ControllerTest {
         controller.checkIfGameIsOver();
         assertEquals("X wint! Score: 1 - 0", controller.winnerText.getText());
     }
+
     @Test
     void testCheckIfGameIsOver_OWins() {
         controller.button1.setText("O");
