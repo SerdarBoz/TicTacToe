@@ -30,6 +30,7 @@ public class Controller implements Initializable {
     private int playerXWins = 0;
     private int playerOWins = 0;
     private int gameCount = 1;
+    private int totalGames = 0;
 
     ArrayList<Button> buttons;
     Random random = new Random();
@@ -135,6 +136,7 @@ public class Controller implements Initializable {
             }
             if (line.equals("XXX")) {
                 playerXWins++;
+                totalGames++;
                 winnerText.setText("X wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
                 disableButtons();
@@ -143,6 +145,7 @@ public class Controller implements Initializable {
             }
             if (line.equals("OOO")) {
                 playerOWins++;
+                totalGames++;
                 winnerText.setText("O wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
                 disableButtons();
@@ -201,15 +204,22 @@ public class Controller implements Initializable {
         }
     }
 
-
     private void writeScoreToFile() {
+        int totalGamesInSeries = playerXWins + playerOWins;
+
+        double playerXWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerXWins / totalGamesInSeries) * 100;
+        double playerOWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerOWins / totalGamesInSeries) * 100;
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt", true))) {
             writer.write("Game " + gameCount + "\n");
-            writer.write("X: " + playerXWins + "\n");
-            writer.write("O: " + playerOWins + "\n\n");
+            writer.write("X Wins: " + playerXWins + " (" + String.format("%.1f", playerXWinPercentage) + "%)\n");
+            writer.write("O Wins: " + playerOWins + " (" + String.format("%.1f", playerOWinPercentage) + "%)\n");
+            writer.write("Total Games: " + totalGames + "\n\n");
         } catch (IOException e) {
+            System.err.println("Fout bij het wegschrijven naar score.txt: " + e.getMessage());
             e.printStackTrace();
         }
+
     }
 
     public class CellOccupiedException extends Exception {
