@@ -9,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,15 +32,18 @@ public class Controller implements Initializable {
     private int totalGames = 0;
 
     GameBoard gameBoard;
+
     private final Random random = new Random();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        gameBoard = new GameBoard(button1, button2, button3, button4, button5, button6, button7, button8, button9);
+        Button[] buttonArray = {button1, button2, button3, button4, button5, button6, button7, button8, button9};
+        gameBoard = new GameBoard(buttonArray);
 
         gameBoard.resetBoard();
-        gameBoard.getAvailableButtons().forEach(this::setupButton);
-
+        for (Button button : gameBoard.getAvailableButtons()) {
+            setupButton(button);
+        }
         updateScoreboard();
         restartSeriesButton.setDisable(true);
     }
@@ -94,7 +96,11 @@ public class Controller implements Initializable {
             throw new CellOccupiedException("Deze is al bezet!");
         }
         button.setText(currentPlayer.toString());
-        currentPlayer = (currentPlayer == Player.X) ? Player.O : Player.X;
+        if (currentPlayer == Player.X) {
+            currentPlayer = Player.O;
+        } else {
+            currentPlayer = Player.X;
+        }
     }
 
     public void checkIfGameIsOver() {
@@ -149,12 +155,8 @@ public class Controller implements Initializable {
             PauseTransition pause = new PauseTransition(Duration.seconds(0.3));
             pause.setOnFinished(event -> {
                 Button randomButton = availableButtons.get(random.nextInt(availableButtons.size()));
-                try {
-                    setPlayerSymbol(randomButton);
-                    checkIfGameIsOver();
-                } catch (CellOccupiedException e) {
-                    e.printStackTrace();
-                }
+                setPlayerSymbol(randomButton);
+                checkIfGameIsOver();
             });
             pause.play();
         }
@@ -162,9 +164,19 @@ public class Controller implements Initializable {
 
     private void writeScoreToFile() {
         int totalGamesInSeries = playerXWins + playerOWins;
+        double playerOWinPercentage;
+        double playerXWinPercentage;
 
-        double playerXWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerXWins / totalGamesInSeries) * 100;
-        double playerOWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerOWins / totalGamesInSeries) * 100;
+        if (totalGamesInSeries == 0) {
+            playerXWinPercentage = 0;
+        } else {
+            playerXWinPercentage = ((double) playerXWins / totalGamesInSeries) * 100;
+        }
+        if (totalGamesInSeries == 0) {
+            playerOWinPercentage = 0;
+        } else {
+            playerOWinPercentage = ((double) playerOWins / totalGamesInSeries) * 100;
+        }
 
         try (var writer = new BufferedWriter(new FileWriter("score.txt", true))) {
             writer.write("Game " + gameCount + "\n");

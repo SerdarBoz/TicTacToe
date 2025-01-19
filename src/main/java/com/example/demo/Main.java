@@ -21,10 +21,5 @@ public class Main extends Application {
             e.printStackTrace();
             System.err.println("Fout bij het laden van sample.fxml: " + e.getMessage());
         }
-
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

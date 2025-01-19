@@ -8,23 +8,27 @@ import java.util.List;
 public class GameBoard {
     private final List<Button> buttons;
 
-    public GameBoard(Button... buttons) {
+    public GameBoard(Button[] buttons) {
         this.buttons = new ArrayList<>(Arrays.asList(buttons));
     }
 
     public void resetBoard() {
-        buttons.forEach(button -> {
+        buttons.stream().forEach(button -> {
             button.setDisable(false);
             button.setText("");
         });
+
     }
 
     public void disableAllButtons() {
-        buttons.forEach(button -> button.setDisable(true));
+        buttons.stream().forEach(button -> {
+            button.setDisable(true);
+        });
     }
 
     public boolean isFull() {
-        return buttons.stream().allMatch(button -> !button.getText().isEmpty());
+        return buttons.stream().noneMatch(button -> button.getText().isEmpty());
+
     }
 
     public String getLine(int index) {
