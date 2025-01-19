@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameBoard {
     private final List<Button> buttons;
-
+    
     public GameBoard(Button[] buttons) {
         this.buttons = new ArrayList<>(Arrays.asList(buttons));
     }

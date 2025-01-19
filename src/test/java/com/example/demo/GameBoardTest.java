@@ -18,7 +18,7 @@ class GameBoardTest {
     @BeforeAll
     static void initToolkit() {
         CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
+        Platform.startup(() -> latch.countDown());
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -37,7 +37,7 @@ class GameBoardTest {
         button7 = new Button();
         button8 = new Button();
         button9 = new Button();
-        gameBoard = new GameBoard(button1, button2, button3, button4, button5, button6, button7, button8, button9);
+        gameBoard = new GameBoard(new Button[]{button1, button2, button3, button4, button5, button6, button7, button8, button9});
     }
 
     @Test

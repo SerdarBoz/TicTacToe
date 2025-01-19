@@ -17,7 +17,7 @@ public class ControllerTest {
     @BeforeAll
     static void initToolkit() {
         CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
+        Platform.startup(() -> latch.countDown());
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -56,7 +56,7 @@ public class ControllerTest {
         controller.scoreboardText = new Text();
         controller.errorText = new Text();
 
-        controller.gameBoard = new GameBoard(button1, button2, button3, button4, button5, button6, button7, button8, button9);
+        controller.gameBoard = new GameBoard(new Button[]{button1, button2, button3, button4, button5, button6, button7, button8, button9});
 
         controller.initialize(null, null);
     }
