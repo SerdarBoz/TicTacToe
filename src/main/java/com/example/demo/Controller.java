@@ -1,22 +1,22 @@
 package com.example.demo;
 
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Duration;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.ResourceBundle;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     @FXML
@@ -32,16 +32,18 @@ public class Controller implements Initializable {
     private int gameCount = 1;
     private int totalGames = 0;
 
-    ArrayList<Button> buttons;
-    Random random = new Random();
+    private GameBoard gameBoard;
+    private final Random random = new Random();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        buttons = new ArrayList<>(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9));
-        buttons.forEach(button -> {
-            setupButton(button);
-            button.setFocusTraversable(false);
-        });
+        // Initialiseer de GameBoard-klasse met de knoppen
+        gameBoard = new GameBoard(button1, button2, button3, button4, button5, button6, button7, button8, button9);
+
+        // Reset het spelbord en stel knoppen in
+        gameBoard.resetBoard();
+        gameBoard.getAvailableButtons().forEach(this::setupButton);
+
         updateScoreboard();
         restartSeriesButton.setDisable(true);
     }
@@ -64,14 +66,9 @@ public class Controller implements Initializable {
 
     @FXML
     void restartGame(ActionEvent event) {
-        buttons.forEach(this::tryAgain);
+        gameBoard.resetBoard();
         winnerText.setText("Tic-Tac-Toe! Best of five!");
         currentPlayer = Player.X;
-    }
-
-    public void tryAgain(Button button) {
-        button.setDisable(false);
-        button.setText("");
     }
 
     private void setupButton(Button button) {
@@ -104,23 +101,13 @@ public class Controller implements Initializable {
 
     public void checkIfGameIsOver() {
         for (int a = 0; a < 8; a++) {
-            String line = switch (a) {
-                case 0 -> button1.getText() + button2.getText() + button3.getText();
-                case 1 -> button4.getText() + button5.getText() + button6.getText();
-                case 2 -> button7.getText() + button8.getText() + button9.getText();
-                case 3 -> button1.getText() + button5.getText() + button9.getText();
-                case 4 -> button3.getText() + button5.getText() + button7.getText();
-                case 5 -> button1.getText() + button4.getText() + button7.getText();
-                case 6 -> button2.getText() + button5.getText() + button8.getText();
-                case 7 -> button3.getText() + button6.getText() + button9.getText();
-                default -> null;
-            };
+            String line = gameBoard.getLine(a);
             if (line.equals("XXX")) {
                 playerXWins++;
                 totalGames++;
                 winnerText.setText("X wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
-                disableButtons();
+                gameBoard.disableAllButtons();
                 checkBestOfFive();
                 return;
             }
@@ -129,34 +116,29 @@ public class Controller implements Initializable {
                 totalGames++;
                 winnerText.setText("O wint! Score: " + playerXWins + " - " + playerOWins);
                 updateScoreboard();
-                disableButtons();
+                gameBoard.disableAllButtons();
                 checkBestOfFive();
                 return;
             }
         }
-        if (buttons.stream().allMatch(button -> !button.getText().isEmpty())) {
+        if (gameBoard.isFull()) {
             winnerText.setText("Gelijkspel! Score: " + playerXWins + " - " + playerOWins);
-            disableButtons();
+            gameBoard.disableAllButtons();
             updateScoreboard();
             checkBestOfFive();
-
         }
-    }
-
-    private void disableButtons() {
-        buttons.forEach(button -> button.setDisable(true));
     }
 
     private void checkBestOfFive() {
         if (playerXWins == 3) {
             winnerText.setText("X wint het spel!");
-            disableButtons();
+            gameBoard.disableAllButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
             tryAgainButton.setDisable(true);
         } else if (playerOWins == 3) {
             winnerText.setText("O wint het spel!");
-            disableButtons();
+            gameBoard.disableAllButtons();
             writeScoreToFile();
             restartSeriesButton.setDisable(false);
             tryAgainButton.setDisable(true);
@@ -164,12 +146,7 @@ public class Controller implements Initializable {
     }
 
     private void computerMove() {
-        ArrayList<Button> availableButtons = new ArrayList<>();
-        for (Button button : buttons) {
-            if (!button.isDisabled() && button.getText().isEmpty()) {
-                availableButtons.add(button);
-            }
-        }
+        List<Button> availableButtons = gameBoard.getAvailableButtons();
         if (!availableButtons.isEmpty()) {
             PauseTransition pause = new PauseTransition(Duration.seconds(0.3));
             pause.setOnFinished(event -> {
@@ -191,7 +168,7 @@ public class Controller implements Initializable {
         double playerXWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerXWins / totalGamesInSeries) * 100;
         double playerOWinPercentage = totalGamesInSeries == 0 ? 0 : ((double) playerOWins / totalGamesInSeries) * 100;
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt", true))) {
+        try (var writer = new BufferedWriter(new FileWriter("score.txt", true))) {
             writer.write("Game " + gameCount + "\n");
             writer.write("X Wins: " + playerXWins + " (" + String.format("%.1f", playerXWinPercentage) + "%)\n");
             writer.write("O Wins: " + playerOWins + " (" + String.format("%.1f", playerOWinPercentage) + "%)\n");
@@ -200,7 +177,6 @@ public class Controller implements Initializable {
             System.err.println("Fout bij het wegschrijven naar score.txt: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     public class CellOccupiedException extends Exception {
@@ -210,6 +186,7 @@ public class Controller implements Initializable {
     }
 }
 
+// Enum
 enum Player {
     X, O
 }
