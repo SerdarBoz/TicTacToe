@@ -94,6 +94,8 @@ public class Controller implements Initializable {
         });
     }
 
+    //test
+
     public void setPlayerSymbol(Button button) throws CellOccupiedException {
         if (!button.getText().isEmpty()) {
             throw new CellOccupiedException("Deze is al bezet!");
